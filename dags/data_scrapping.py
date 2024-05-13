@@ -4,7 +4,19 @@ from airflow.utils.dates import days_ago
 import subprocess
 
 def execute_notebook():
-    subprocess.run(["/usr/local/bin/python3", "scrapping_domuz.py"])
+    subprocess.run(["/usr/local/bin/python3", "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/02.Dom_uz.py"])
+
+def execute_notebook():
+    subprocess.run(["/usr/local/bin/python3", "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/03.Joymee.py"])
+    
+def execute_notebook():
+    subprocess.run(["/usr/local/bin/python3", "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/04.Local.py"])
+
+def execute_notebook():
+    subprocess.run(["/usr/local/bin/python3", "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/05.Olx.py"])
+
+def execute_notebook():
+    subprocess.run(["/usr/local/bin/python3", "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/06.Uybor.py"])
 
 dag = DAG(
     'scrapping_dom_uz',
