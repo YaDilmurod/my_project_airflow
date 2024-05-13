@@ -2,26 +2,60 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 import subprocess
 
-def execute_notebooks():
-    scripts = [
-        "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/02.Dom_uz.py",
-        "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/03.Joymee.py",
-        "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/04.Local.py",
-        "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/05.Olx.py",
-        "/Users/didi/Desktop/data_scrapping/Data Scrapping/Scrapping/06.Uybor.py"
-    ]
-    for script in scripts:
-        subprocess.run(["/usr/local/bin/python3", script])
+def execute_notebook(script):
+    subprocess.run(["/usr/local/bin/python3", script])
 
 dag = DAG(
     'scrapping',
     catchup=False
 )
 
-execute_notebooks_task = PythonOperator(
-    task_id='execute_scrapping',
-    python_callable=execute_notebooks,
-    dag=dag
+scripts = [
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/dom_uz.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/joymee.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/local.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/olx.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/uybor.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/grouping_sources.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/eda.py"
+]
+
+for script in scripts:
+    task_id = f'execute_{script.split("/")[-1].split(".")[0]}'
+    execute_task = PythonOperator(
+        task_id=task_id,
+        python_callable=execute_notebook,
+        op_args=[script],
+        dag=dag
+    )
+
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+import subprocess
+
+def execute_notebook(script):
+    subprocess.run(["/usr/local/bin/python3", script])
+
+dag = DAG(
+    'scrapping',
+    catchup=False
 )
 
-execute_notebooks_task
+scripts = [
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/dom_uz.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/joymee.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/local.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/olx.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/uybor.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/grouping_sources.py",
+    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/eda.py"
+]
+
+for script in scripts:
+    task_id = f'execute_{script.split("/")[-1].split(".")[0]}'
+    execute_task = PythonOperator(
+        task_id=task_id,
+        python_callable=execute_notebook,
+        op_args=[script],
+        dag=dag
+    )
