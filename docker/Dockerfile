@@ -38,6 +38,12 @@ RUN chmod u+x /run-startup.sh
 RUN chmod u+x /shell-launch-script.sh
 RUN chmod u+x /verification.sh
 
+# Copy requirements.txt from one folder above
+COPY requirements.txt /requirements.txt
+
+# Install Python dependencies
+RUN pip install --upgrade pip && pip install --no-cache-dir -r /requirements.txt
+
 # Post bootstrap to avoid expensive docker rebuilds
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg

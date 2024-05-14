@@ -1,30 +1,59 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
-import subprocess
+from datetime import datetime
 
-def execute_notebook(script):
-    subprocess.run(["/usr/local/bin/python3", script])
+from dom_uz import main as dom_uz_main
+from joymee import main as joymee_main
+from local import main as local_main
+from uybor import main as uybor_main
+from olx import main as olx_main
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'start_date': datetime(2024, 5, 1),
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+}
 
 dag = DAG(
-    'scrapping_test',
-    catchup=False
+    'scrapping_main',
+    default_args=default_args,
+    description='A DAG to run main functions from multiple scripts',
+    schedule_interval='@daily',
 )
 
-scripts = [
-    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/dom_uz.py",
-    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/joymee.py",
-    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/local.py",
-    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/olx.py",
-    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/uybor.py",
-    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/Scrapping/grouping_sources.py",
-    "/Users/didi/Desktop/data_scrapping/Data Scrapping/Code/eda.py"
-]
+# Define PythonOperator tasks for each main function
+run_dom_uz_task = PythonOperator(
+    task_id='run_dom_uz_script',
+    python_callable=dom_uz_main,
+    dag=dag,
+)
 
-for i, script in enumerate(scripts):
-    task_id = f'execute_{i+1}_{script.split("/")[-1].split(".")[0]}'
-    execute_task = PythonOperator(
-        task_id=task_id,
-        python_callable=execute_notebook,
-        op_args=[script],
-        dag=dag
-    )
+run_joymee_task = PythonOperator(
+    task_id='run_joymee_script',
+    python_callable=joymee_main,
+    dag=dag,
+)
+
+run_local_task = PythonOperator(
+    task_id='run_local_script',
+    python_callable=local_main,
+    dag=dag,
+)
+
+run_uybor_task = PythonOperator(
+    task_id='run_uybor_script',
+    python_callable=uybor_main,
+    dag=dag,
+)
+
+run_olx_task = PythonOperator(
+    task_id='run_olx_script',
+    python_callable=olx_main,
+    dag=dag,
+)
+
+# Set task dependencies
+run_dom_uz_task >> run_joymee_task >> run_local_task >> run_uybor_task >> run_olx_task
